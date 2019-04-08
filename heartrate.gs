@@ -14,25 +14,15 @@ var GET_HEART_RATE_DATA = 1; // set this to 0 if you want to do step data instea
 
 
 function onOpen() {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var menuEntries = [
-    {
-      name: "Setup",
-      functionName: "setup"
-    },
-  {
-        name: "Authorize",
-        functionName: "showSidebar"
-  },
-  {
-    name: "Reset",
-    functionName: "clearService"
-  },
-  {
-        name: "Sync",
-    functionName: "refreshTimeSeries"
-  }];
-    ss.addMenu("Fitbit", menuEntries);
+   
+    SpreadsheetApp.getUi()
+    .createMenu("Intraday Fitbit HeartRate")
+    .addItem('Setup','setup')
+    .addItem('Authorize', 'showSidebar')
+    .addItem('Reset', 'clearService')
+    .addItem("Download data", 'refreshTimeSeries')
+    .addToUi();
+   
 }
 
 
@@ -78,16 +68,18 @@ function getConsumerSecret() {
     return secret;
 }
 
+function getProjectKey() {
+  return ScriptApp.getProjectKey();
+}
+
 // function saveSetup saves the setup params from the UI
 function saveSetup(e) {
-    setConsumerKey(e.parameter.consumerKey);
-    setConsumerSecret(e.parameter.consumerSecret);
-    setLoggables(e.parameter.loggables);
-    setFirstDate(e.parameter.firstDate);
-    setLastDate(e.parameter.lastDate);
-    var app = UiApp.getActiveApplication();
-    app.close();
-    return app;
+      
+    setConsumerKey(e.consumerKey);
+    setConsumerSecret(e.consumerSecret);
+    setLoggables(e.loggables);
+    setFirstDate(e.firstDate);
+    
 }
 
 function setFirstDate(firstDate) {
@@ -117,61 +109,11 @@ function getLastDate() {
 
 // function setup accepts and stores the Consumer Key, Consumer Secret, Project Key, firstDate, and list of Data Elements
 function setup() {
-    var doc = SpreadsheetApp.getActiveSpreadsheet();
-    var app = UiApp.createApplication().setTitle("Setup Fitbit Download");
-    app.setStyleAttribute("padding", "10px");
-
-    var consumerKeyLabel = app.createLabel("Fitbit OAuth 2.0 Client ID:*");
-    var consumerKey = app.createTextBox();
-    consumerKey.setName("consumerKey");
-    consumerKey.setWidth("100%");
-    consumerKey.setText(getConsumerKey());
-  
-    var consumerSecretLabel = app.createLabel("Fitbit OAuth Consumer Secret:*");
-    var consumerSecret = app.createTextBox();
-    consumerSecret.setName("consumerSecret");
-    consumerSecret.setWidth("100%");
-    consumerSecret.setText(getConsumerSecret());
-  
-    var projectKeyTitleLabel = app.createLabel("Project key: ");
-    var projectKeyLabel = app.createLabel(ScriptApp.getProjectKey());
-  
-    var firstDate = app.createTextBox().setId("firstDate").setName("firstDate");
-    firstDate.setName("firstDate");
-    firstDate.setWidth("100%");
-    firstDate.setText(getFirstDate());
-
-    var lastDate = app.createTextBox().setId("lastDate").setName("lastDate");
-    lastDate.setName("lastDate");
-    lastDate.setWidth("100%");
-    lastDate.setText(getLastDate());
-    // create the save handler and button
-    var saveHandler = app.createServerClickHandler("saveSetup");
-    var saveButton = app.createButton("Save Setup", saveHandler);
-
-    // put the controls in a grid
-    var listPanel = app.createGrid(8, 3);
-    listPanel.setWidget(1, 0, consumerKeyLabel);
-    listPanel.setWidget(1, 1, consumerKey);
-    listPanel.setWidget(2, 0, consumerSecretLabel);
-    listPanel.setWidget(2, 1, consumerSecret);
-    listPanel.setWidget(3, 0, app.createLabel(" * (obtain these at dev.fitbit.com, use OAuth2.0)"));
-    listPanel.setWidget(4, 0, projectKeyTitleLabel);
-    listPanel.setWidget(4, 1, projectKeyLabel);
-    listPanel.setWidget(5, 0, app.createLabel("Start Date for download (yyyy-mm-dd)"));
-    listPanel.setWidget(5, 1, firstDate);
-    listPanel.setWidget(6, 0, app.createLabel("End date for download (yyyy-mm-dd)"));
-    listPanel.setWidget(6, 1, lastDate);
-    listPanel.setWidget(7, 0, app.createLabel("Very long intervals will not work; exceed Fitbit rate limit and/or function will timeout"));
     
-    // Ensure that all controls in the grid are handled
-    saveHandler.addCallbackElement(listPanel);
-    // Build a FlowPanel, adding the grid and the save button
-    var dialogPanel = app.createFlowPanel();
-    dialogPanel.add(listPanel);
-    dialogPanel.add(saveButton);
-    app.add(dialogPanel);
-    doc.show(app);
+  var html = HtmlService.createHtmlOutputFromFile('Setup').setHeight(1200);
+     
+    SpreadsheetApp.getUi()
+        .showModalDialog(html, 'Setup');
 }
 
 function getFitbitService() {
