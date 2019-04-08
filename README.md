@@ -11,6 +11,8 @@ And "_Developer information: invalidrequest - Invalid redirecturi parameter valu
 
 That means you did not follow the instructions correctly.
 
+For all intraday scripts you must also get the Setup.html file. This file should be loaded to your google scripts project as well. The HtmlService will use this when calling the Setup function.
+
 ## interday.gs
 Download step data, one row per day, from a start day to the present. Make sure not to set the start day too far in the past.
 
