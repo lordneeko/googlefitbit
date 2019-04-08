@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<style>
+input[type=text], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+div {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 10px;
+}
+</style>
+  <head>
+    
+  </head>
+  <body>
+  <form id="myForm" onsubmit="handleFormSubmit(this)">
+  <div>
+    Fitbit OAuth 2.0 Client ID:*  
+    <input type="text" name="consumerKey" style="width:100%"/>
+  </div>
+  <div>
+    Fitbit OAuth Consumer Secret:*  
+    <input type="text" name="consumerSecret" style="width:100%"/>
+  </div>  
+  <div>
+    Project Key:  
+    <input type="text" name="projectKey" style="width:100%;color:grey" readonly/>
+  </div>   
+  <div>
+    First Date: 
+    <input type="date" name="firstDate" style="width:100%"/>
+  </div>
+    <input type="submit" value="Save"/> 
+    </form>
+    <div id="output"></div>
+<script>
+    function handleFormSubmit(formObject) {
+        google.script.run.saveSetup(formObject);
+        google.script.host.close();
+      }
+    function onSuccessKey(key) {
+    document.getElementsByName("consumerKey")[0].value = key;
+    }
+    function onSuccessSecret(secret) {
+    document.getElementsByName("consumerSecret")[0].value = secret;
+    }
+    function onSuccessProject(project) {
+    document.getElementsByName("projectKey")[0].value = project;
+    }
+    function onSuccessDate(date) {
+    document.getElementsByName("firstDate")[0].value = date;
+    }
+      var key = google.script.run.withSuccessHandler(onSuccessKey).getConsumerKey();
+      var secret = google.script.run.withSuccessHandler(onSuccessSecret).getConsumerSecret();
+      var projectKey = google.script.run.withSuccessHandler(onSuccessProject).getProjectKey();
+      var firstDate = google.script.run.withSuccessHandler(onSuccessDate).getFirstDate();
+        </script>
+  </body>
+</html>
